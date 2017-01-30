@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="AviatorServer:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/AviatorServer_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="AviatorServer/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="AviatorServer" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="json-20140107" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

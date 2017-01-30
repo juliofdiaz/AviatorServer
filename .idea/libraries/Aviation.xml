@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Aviation">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../Aviation" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../Aviation/src" />
+    </SOURCES>
+  </library>
+</component>
