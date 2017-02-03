@@ -2,11 +2,6 @@ package Aviator;
 
 import java.io.FileNotFoundException;
 import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-
-import static Aviator.Airline.getAirline;
-import static Aviator.Airport.getAirport;
 
 /**
  * This main interface.
@@ -31,32 +26,34 @@ public class AviatorTester {
 
 
         for(Route route : routes.getRoutes()){
-            Airline airline = getAirline(route.getCarrier(),airlines);
-            Airport out = getAirport(route.getOrigin(),airports);
-            Airport in = getAirport(route.getDestination(),airports);
+            route.setAirline(airlines);
+            route.setAirportOut(airports);
+            route.setAirportIn(airports);
 
-            ZoneId outZone = ZoneId.of(out.getTimeZone());
-
-            Long timeLapsed;
-            if(route.getArrivalOffset()==0){
-                timeLapsed = ChronoUnit.MINUTES.between(route.getTakeOff(),LocalTime.now(outZone));
-            }else{
-                timeLapsed = ChronoUnit.MINUTES.between(route.getTakeOff(),LocalTime.now(outZone))+1440;
-            }
-            Long duration = route.getDurationInMinutes();
+            Airport out = route.getOrigin();
             if(route.isOnAir(out.getTimeZone())){
-                System.out.println( airline.getName() );
-                System.out.print( airline.getIata()+" "+route.getNumber() );
-                System.out.print( "\t"+out.getCity()+"("+out.getIata() );
-                System.out.println( ") - "+in.getCity()+"("+in.getIata()+")" );
-                System.out.println( route.getTakeOff()+" "+graphProgress(timeLapsed,duration)+
-                        " "+route.getLanding() );
-                System.out.println( );
+                System.out.println( routeString(route) );
             }
 
 
         }
 
+    }
+
+    /**
+     *
+     * 
+     * @param route The Route to be displayed.
+     * @return A String representing information about the Route.
+     */
+    private static String routeString(Route route){
+        return route.getCarrier().getName()+"\n"+
+                route.getCarrier().getIata()+" "+route.getNumber() +
+                "\t"+route.getOrigin().getCity()+"("+route.getOrigin().getIata() +
+                ") - "+route.getDestination().getCity()+"("+route.getDestination().getIata()+
+                ")"+"\n"+route.getTakeOff()+" "+
+                graphProgress(route.getTimeLapsed(),route.getDurationInMinutes())+
+                " "+route.getLanding();
     }
 
     /**

@@ -21,9 +21,9 @@ import java.util.ArrayList;
  */
 public class Route {
     private Integer number;
-    private String carrier;
-    private String origin;
-    private String destination;
+    private Airline carrier;
+    private Airport origin;
+    private Airport destination;
     private LocalTime takeOff;
     private LocalTime landing;
     private LocalTime duration;
@@ -33,9 +33,9 @@ public class Route {
     public Route(String line){
         String[] info = line.split(",");
         this.setNumber(Integer.parseInt(info[0]));
-        this.setCarrier( info[1] );
-        this.setOrigin( info[2] );
-        this.setDestination( info[3] );
+        this.setCarrier( new Airline(info[1], true) );
+        this.setOrigin( new Airport(info[2], true) );
+        this.setDestination( new Airport(info[3], true) );
         this.setTakeOff( getLocalTime(info[4]));
         this.setLanding( getLocalTime(info[5]) );
         this.setDuration( getLocalTime(info[6]));
@@ -117,7 +117,7 @@ public class Route {
      *
      * @return The value of the carrier class variable.
      */
-    public String getCarrier() {
+    public Airline getCarrier() {
         return carrier;
     }
 
@@ -126,8 +126,23 @@ public class Route {
      *
      * @param carrier The new value of the carrier class variable.
      */
-    public void setCarrier(String carrier) {
+    public void setCarrier(Airline carrier) {
         this.carrier = carrier;
+    }
+
+    /**
+     * This method sets the full carrier information given an
+     * AirportList.
+     *
+     * @param airlineList The list of all the airlines in the database.
+     */
+    public void setAirline(AirlineList airlineList){
+        if(airlineList.contains(this.carrier.getIata())){
+            this.setCarrier( airlineList.get(this.carrier.getIata()) );
+        }else {
+            //some error
+            this.setCarrier(new Airline());
+        }
     }
 
     /**
@@ -135,7 +150,7 @@ public class Route {
      *
      * @return The value of the origin class variable.
      */
-    public String getOrigin() {
+    public Airport getOrigin() {
         return origin;
     }
 
@@ -144,8 +159,23 @@ public class Route {
      *
      * @param origin The new value of the origin class variable.
      */
-    public void setOrigin(String origin) {
+    public void setOrigin(Airport origin) {
         this.origin = origin;
+    }
+
+    /**
+     * This method updates the origin class variable to include all the
+     * airport information.
+     *
+     * @param airportList The list of all the airports in the database.
+     */
+    public void setAirportOut(AirportList airportList){
+        if(airportList.contains(this.origin.getIata())){
+            this.setOrigin(airportList.get(this.origin.getIata()));
+        }else {
+            //some error
+            this.setOrigin(new Airport());
+        }
     }
 
     /**
@@ -153,7 +183,7 @@ public class Route {
      *
      * @return The value of the destination class variable.
      */
-    public String getDestination() {
+    public Airport getDestination() {
         return destination;
     }
 
@@ -162,8 +192,23 @@ public class Route {
      *
      * @param destination The new value of the destination class variable.
      */
-    public void setDestination(String destination) {
+    public void setDestination(Airport destination) {
         this.destination = destination;
+    }
+
+    /**
+     * This method updates the destination class variable to include all the
+     * airport information.
+     *
+     * @param airportList The list of all the airports in the database.
+     */
+    public void setAirportIn(AirportList airportList){
+        if(airportList.contains(this.destination.getIata())){
+            this.setDestination(airportList.get(this.destination.getIata()));
+        }else {
+            //some error
+            this.setDestination(new Airport());
+        }
     }
 
     /**
@@ -278,15 +323,33 @@ public class Route {
 
 
     /**
+     * This method allows the retrieval of the duration of the flight
+     * in minutes.
      *
-     * @return
+     * @return The value of the duration in minutes.
      */
     public Long getDurationInMinutes(){
         return ChronoUnit.MINUTES.between(LocalTime.of(0,0),
                 this.getDuration());
     }
 
+    /**
+     * This method calculates the time that lapsed since the plane left, given
+     * a Route.
+     *
+     * @return The time lapsed since the plane took off.
+     */
     public Long getTimeLapsed(){
-        return null;
+        ZoneId outZone = ZoneId.of(this.getOrigin().getTimeZone());
+
+        Long timeLapsed;
+        if(this.getArrivalOffset()==0){
+            timeLapsed = ChronoUnit.MINUTES.between(this.getTakeOff(),
+                    LocalTime.now(outZone));
+        }else{
+            timeLapsed = ChronoUnit.MINUTES.between(this.getTakeOff(),
+                    LocalTime.now(outZone))+1440;
+        }
+        return timeLapsed;
     }
 }

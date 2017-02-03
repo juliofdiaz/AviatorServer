@@ -58,11 +58,15 @@ public class AviatorMain {
                                            AirportList airportList,AirlineList airlineList){
         JSONArray jsonArray = new JSONArray();
         for(Route route : routeList.getRoutes()){
-            Airline airline = getAirline(route.getCarrier(),airlineList);
-            Airport out = getAirport(route.getOrigin(),airportList);
-            Airport in = getAirport(route.getDestination(),airportList);
+            route.setAirline(airlineList);
+            route.setAirportOut(airportList);
+            route.setAirportIn(airportList);
 
-            Long timeLapsed = getTimeLapsed(route,out);
+            Airline airline = route.getCarrier();
+            Airport out = route.getOrigin();
+            Airport in = route.getDestination();
+
+            Long timeLapsed = route.getTimeLapsed();
             Long duration = route.getDurationInMinutes();
             if(route.isOnAir(out.getTimeZone())){
                 JSONObject routeJson = setRouteJson(route,airline,
@@ -71,28 +75,6 @@ public class AviatorMain {
             }
         }
         return jsonArray;
-    }
-
-    /**
-     * This method calculates the time that lapsed since the plane left, given
-     * a Route.
-     *
-     * @param route Route whose time lapsed will be calculated.
-     * @param airportOut Destination Airport of the Route object.
-     * @return The time lapsed since the plane took off.
-     */
-    private static Long getTimeLapsed(Route route,Airport airportOut){
-        ZoneId outZone = ZoneId.of(airportOut.getTimeZone());
-
-        Long timeLapsed;
-        if(route.getArrivalOffset()==0){
-            timeLapsed = ChronoUnit.MINUTES.between(route.getTakeOff(),
-                    LocalTime.now(outZone));
-        }else{
-            timeLapsed = ChronoUnit.MINUTES.between(route.getTakeOff(),
-                    LocalTime.now(outZone))+1440;
-        }
-        return timeLapsed;
     }
 
     /**

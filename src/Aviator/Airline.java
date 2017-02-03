@@ -22,6 +22,13 @@ public class Airline {
         this.setCountry(info[3]);
     }
 
+    public Airline(String iataString, Boolean isOnlyIata){
+        this();
+        if(isOnlyIata) {
+            this.iata = iataString;
+        }
+    }
+
     public Airline(){
         this.name="N/A";
         this.icao="N/A";

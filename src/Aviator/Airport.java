@@ -28,6 +28,13 @@ public class Airport {
         this.setTimeZone(info[5]);
     }
 
+    public Airport(String iata, Boolean isOnlyIata){
+        this();
+        if(isOnlyIata){
+            this.iata = iata;
+        }
+    }
+
     public Airport(){
         this.name = "N/A";
         this.icao = "N/A";
